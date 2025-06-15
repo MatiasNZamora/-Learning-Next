@@ -2,10 +2,22 @@ import { CiLogout } from "react-icons/ci";
 import Link from "next/link";
 import Image from "next/image";
 import { SidebarItem } from "./SidebarItem";
-import { IoBasketOutline, IoCalendar, IoCalendarOutline, IoCheckboxOutline, IoCodeWorking, IoListOutline } from "react-icons/io5";
+import { IoBasketOutline, IoCalendar, IoCalendarOutline, IoCheckboxOutline, IoCodeWorking, IoListOutline, IoPerson, IoPersonOutline } from "react-icons/io5";
 
-export const Sidebar = () => {
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { LougoutButton } from "./LogoutButton";
 
+export const Sidebar = async () => {
+
+    const session = await getServerSession(authOptions);
+
+    const userUrl = (session?.user?.image) ? session.user.image : 'https://tailus.io/sources/blocks/stats-cards/preview/images/second_user.webp';
+    const userName = session?.user?.name;
+    const userEmail = session?.user?.email;
+
+    // const userRole = 
+    
     const MenuItems = [
         {
             icon: <IoCalendarOutline />,
@@ -32,6 +44,11 @@ export const Sidebar = () => {
             title: 'Productos',
             path: '/dashboard/products'
         },
+        {
+            icon: <IoPersonOutline />,
+            title: 'Perfil',
+            path: '/dashboard/profile'
+        },
     ];
 
 
@@ -51,13 +68,13 @@ export const Sidebar = () => {
                 </div>
                 <div className="mt-8 text-center">
                     <Image
-                        src="https://tailus.io/sources/blocks/stats-cards/preview/images/second_user.webp"
+                        src={ userUrl }
                         alt="user Image"
                         className="w-10 h-10 m-auto rounded-full object-cover lg:w-28 lg:h-28"
                         height={150}
                         width={150}
                     />
-                    <h5 className="hidden mt-4 text-xl font-semibold text-gray-600 lg:block"> Cynthia J. Watts </h5>
+                    <h5 className="hidden mt-4 text-xl font-semibold text-gray-600 lg:block"> { userName } </h5>
                     <span className="hidden text-gray-400 lg:block"> Admin </span>
                 </div>
                 <ul className="space-y-2 tracking-wide mt-8">
@@ -69,10 +86,7 @@ export const Sidebar = () => {
                 </ul>
             </div>
             <div className="px-6 -mx-6 pt-4 flex justify-between items-center border-t">
-                <button className="px-4 py-3 flex items-center space-x-4 rounded-md text-gray-600 group">
-                    <CiLogout />
-                    <span className="group-hover:text-gray-700">Logout</span>
-                </button>
+                <LougoutButton/>
             </div>
         </aside>
     )
